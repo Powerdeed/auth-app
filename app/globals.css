@@ -1,0 +1,275 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f5f5f5;
+  --foreground: #171717;
+}
+
+/* @media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+} */
+
+@theme inline {
+  --font-geist-sans: "Plus Jakarta Sans", "Open Sans", sans-serif;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --primary-blue: #0a1f44;
+  --primary-blue-faded: #0a1f448a;
+  --secondary-blue: #0043b9;
+  --secondary-blue-faded: #0043b98a;
+  --primary-yellow: #ffd600;
+  --primary-yellow-faded: #ffd6008a;
+  --secondary-yellow: #ffeb86;
+  --primary-red: #ff0000;
+  --primary-red-faded: #ff00008a;
+  --secondary-red: #ff3636;
+  --primary-green: #00c896;
+  --primary-green-faded: #00c8968a;
+  --secondary-green: #61ffd7;
+  --primary-purple: #9932cc;
+  --primary-purple-faded: #9932cc8a;
+  --secondary-purple: #ee82ee;
+  --black: #000000;
+  --white: #ffffff;
+  --primary-grey: #838383;
+  --secondary-grey: #c0c0c0;
+  --terciary-grey: #cacaca;
+}
+
+@layer utilities {
+  /* Custom scrollbar styling for side bar*/
+  .side-bar-scrollbar::-webkit-scrollbar {
+    width: 10px; /* vertical */
+    height: 10px; /* horizontal */
+    transition: background-color 300ms ease;
+  }
+
+  .side-bar-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .side-bar-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--terciary-grey);
+    border-radius: 999px;
+  }
+
+  .side-bar-scrollbar::-webkit-scrollbar-button {
+    display: none; /* removes arrow buttons */
+  }
+
+  .side-bar-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: var(--terciary-grey);
+  }
+
+  .side-bar-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: var(--terciary-grey) transparent;
+  }
+
+  /* Custom scrollbar styling for section scrolls*/
+  .section-scrollbar::-webkit-scrollbar {
+    width: 10px; /* vertical */
+    height: 10px; /* horizontal */
+    transition: background-color 300ms ease;
+  }
+
+  .section-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .section-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--terciary-grey);
+    border-radius: 999px;
+  }
+
+  .section-scrollbar::-webkit-scrollbar-button {
+    display: none; /* removes arrow buttons */
+  }
+
+  .section-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: var(--terciary-grey);
+  }
+
+  .section-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: var(--terciary-grey) transparent;
+  }
+
+  /* No scrollbar styling */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* Input styling */
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+}
+
+@keyframes fadePulse {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: var(--font-family);
+}
+
+/********** PAGE STYLES **********/
+.uniform-page-display {
+  @apply p-5 flex flex-col gap-5;
+}
+
+/********** TEXT STYLES **********/
+.text-style__logo {
+  @apply text-[26px] font-sans font-bold leading-tight;
+}
+
+.text-style__nav {
+  @apply text-[12px] font-sans font-medium leading-tight;
+}
+
+.text-style__footer {
+  @apply text-[12px] font-sans font-normal leading-tight;
+}
+
+.text-style__section-title {
+  @apply text-[23px] md:text-[24px] font-sans font-semibold leading-tight;
+}
+
+.text-style__heading {
+  @apply text-[20px] md:text-[22px] font-sans font-semibold leading-tight;
+}
+
+.text-style__subheading {
+  @apply text-[18px] md:text-[16px] font-sans font-medium leading-tight;
+}
+
+.text-style__big-text {
+  @apply text-[14px] md:text-[15px] font-sans font-semibold leading-tight;
+}
+
+.text-style__body {
+  @apply text-[13px] md:text-[14px] font-sans font-normal leading-normal;
+}
+
+.text-style__body--bold {
+  @apply text-[13px] md:text-[14px] font-sans font-semibold leading-normal;
+}
+
+.text-style__small-text {
+  @apply text-[11px] md:text-[12px] font-sans font-medium leading-tight;
+}
+
+.text-style__small-text--bold {
+  @apply text-[11px] md:text-[12px] font-sans font-semibold leading-tight;
+}
+
+.text-style__button {
+  @apply text-[14px] md:text-[16px] font-sans font-normal leading-normal text-(--primary-yellow);
+}
+
+.text-style__link {
+  @apply text-(--secondary-blue) text-[11px] md:text-[12px] font-sans font-semibold leading-tight hover:underline cursor-pointer;
+}
+
+/********** GLOBAL STYLES **********/
+.feature-container-vertical {
+  @apply p-2.5 md:p-5 flex flex-col gap-2.5 md:gap-5 bg-white border border-(--terciary-grey) rounded-[10px];
+}
+
+.feature-container-horizontal {
+  @apply flex gap-2.5 items-center p-2.5 md:p-5 border border-(--terciary-grey) rounded-[10px] bg-white;
+}
+
+.rounded-border {
+  @apply text-center px-2 py-1 rounded-[10px] border;
+}
+
+.vertical-layout__outer {
+  @apply flex flex-col gap-5;
+}
+
+.vertical-layout__inner {
+  @apply flex flex-col gap-2.5;
+}
+
+.horizontal-layout {
+  @apply flex items-center gap-2.5;
+}
+
+.containerize {
+  @apply w-fit flex items-center gap-2 py-1 px-2 border rounded-[10px];
+}
+
+.buttonize {
+  @apply min-w-fit cursor-pointer duration-300;
+}
+
+.input-style {
+  @apply duration-80;
+
+  /* 1. Remove the default browser outline */
+  @apply focus:outline-none;
+
+  /* 2. Remove the border change so layout doesn't "jump" */
+  @apply focus:border-transparent;
+
+  /* 3. Apply a 3px shadow (ring) */
+  /* ring-3 creates a 3px spread */
+  @apply focus:ring-3 focus:ring-(--secondary-grey);
+
+  /* 4. Extra styling */
+  @apply bg-(--secondary-grey)/30 rounded-[10px] p-2;
+}
+
+.wrapped-input-style {
+  @apply w-full bg-(--secondary-grey)/30 rounded-[10px] px-2.5 py-2 focus-within:ring-3 focus-within:ring-(--secondary-grey) duration-80 flex items-center gap-2.5;
+}
+
+.overlay {
+  @apply fixed pl-70 pr-5 w-full h-full top-0 left-0 flex flex-col justify-center items-center bg-(--terciary-grey)/40 z-2;
+}
+
+.selector {
+  @apply relative p-2 min-w-40 bg-(--terciary-grey)/30 rounded-[10px] cursor-pointer;
+}
+
+.selector-dropdown {
+  @apply absolute duration-80 p-1 border border-(--terciary-grey) bg-white rounded-[10px] left-0 top-10;
+}
+
+.selector-dropdown-option {
+  @apply flex justify-between p-2 rounded-[10px] duration-150 hover:bg-(--secondary-grey)/30 cursor-pointer;
+}
+
+.shadow-on-hover {
+  @apply duration-300 hover:shadow-[0_0_8px_2px_var(--terciary-grey)];
+}
