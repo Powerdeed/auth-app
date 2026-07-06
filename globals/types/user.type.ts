@@ -5,7 +5,6 @@ export interface User {
   name: string;
   email: string;
   role: UserRole;
-  accessScopes?: UserAccessScope[];
   profile?: UserProfile;
   preferences?: UserPreferences;
   security?: UserSecurity;
@@ -19,20 +18,6 @@ export interface UserCredentials {
   email: string;
   password: string;
 }
-
-export type UserAccessScope =
-  | "dashboard"
-  | "leads"
-  | "services"
-  | "projects"
-  | "websiteContent"
-  | "articles"
-  | "media"
-  | "scheduling"
-  | "reports"
-  | "customization"
-  | "settings"
-  | "users";
 
 export type UserThemePreference = "system" | "light" | "dark";
 export type DashboardDensity = "compact" | "comfortable";
@@ -102,7 +87,7 @@ export interface UserRoleGovernance {
 }
 
 export type UserUpdatePayload = Partial<
-  Pick<User, "name" | "email" | "role" | "accessScopes"> & {
+  Pick<User, "name" | "email" | "role"> & {
     profile: UserProfile;
     preferences: UserPreferences;
     security: UserSecurity;
