@@ -33,12 +33,7 @@ export type RoleId =
   | "hr.officer"
   | "executive.viewer";
 
-export type RoleScopeType =
-  | "global"
-  | "app"
-  | "department"
-  | "project"
-  | "site";
+export type RoleScopeType = "global" | "app" | "department" | "project" | "site";
 
 export interface RoleAssignment {
   roleId: RoleId;
@@ -71,12 +66,7 @@ export type SeniorityLevel =
   | "director"
   | "executive";
 
-export type EmploymentType =
-  | "full_time"
-  | "part_time"
-  | "contractor"
-  | "intern"
-  | "temporary";
+export type EmploymentType = "full_time" | "part_time" | "contractor" | "intern" | "temporary";
 
 export interface EmploymentProfile {
   employeeNumber?: string;
@@ -96,6 +86,14 @@ export interface AccessProfile {
   appAccess: AppId[];
   roles: RoleAssignment[];
   directPermissions?: UserPermission[];
+}
+
+export interface UserTest {
+  _id: string;
+  name: string;
+  email: string;
+  roles: UserRole[];
+  keycloakUserId?: string;
 }
 
 export interface User {

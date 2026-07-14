@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Powerdeed Auth App
 
-## Getting Started
+Next.js app that coordinates browser login between internal apps, Keycloak, and
+identity-service.
 
-First, run the development server:
+## Responsibility
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+Auth-app does not store passwords and does not own the user database. It:
+
+- Receives app login redirects such as `?client=cms&returnTo=/dashboard`
+- Starts Keycloak OIDC authorization-code login with PKCE
+- Handles the Keycloak callback
+- Sends the authorization code and PKCE verifier to identity-service
+- Redirects the browser back to the requesting app
+
+Keycloak owns password entry, forgot-password, MFA, and the SSO browser session.
+Identity-service owns the Powerdeed HttpOnly session cookie.
+
+## Routes
+
+```txt
+/login
+  Redirect launcher. Reads client/returnTo and sends the browser to Keycloak.
+
+/login/callback
+  Receives Keycloak callback, asks identity-service to create the session, then
+  redirects back to the requesting app.
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Environment
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```txt
+NEXT_PUBLIC_API_BASE_URL=http://localhost:3000
+NEXT_PUBLIC_KEYCLOAK_URL=http://localhost:8081
+NEXT_PUBLIC_KEYCLOAK_REALM=powerdeed
+NEXT_PUBLIC_KEYCLOAK_CLIENT_ID=auth-app
+NEXT_PUBLIC_KEYCLOAK_REDIRECT_URI=http://localhost:3001/login/callback
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+`NEXT_PUBLIC_API_BASE_URL` must point to identity-service, not CMS service.
 
-## Learn More
+## Client Registry
 
-To learn more about Next.js, take a look at the following resources:
+Known app redirect targets live in:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```txt
+lib/keycloak/constants/AppURLs.ts
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Keep this list aligned with Keycloak client redirect/post-logout settings.

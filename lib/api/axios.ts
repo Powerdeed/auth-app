@@ -46,11 +46,5 @@ api.interceptors.request.use((config) => {
     delete config.headers["content-type"];
   }
 
-  if (typeof window !== "undefined") {
-    const token = localStorage.getItem("accessToken");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-  }
   return config;
 });

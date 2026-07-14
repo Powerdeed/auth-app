@@ -20,7 +20,7 @@ const decodeBase64Url = (value: string) => {
   return atob(padded);
 };
 
-const decodeJwtClaims = (token: string): KeycloakTokenClaims => {
+export const decodeJwtClaims = (token: string): KeycloakTokenClaims => {
   const [, payload] = token.split(".");
 
   if (!payload) return {};
@@ -28,7 +28,7 @@ const decodeJwtClaims = (token: string): KeycloakTokenClaims => {
   return JSON.parse(decodeBase64Url(payload)) as KeycloakTokenClaims;
 };
 
-export const exchangeKeycloakCodeForTokens = async (code: string) => {
+export const exchangeKeycloakCodeForToken = async (code: string) => {
   const codeVerifier = sessionStorage.getItem("keycloak_pkce_verifier");
 
   if (!codeVerifier) {
@@ -36,6 +36,7 @@ export const exchangeKeycloakCodeForTokens = async (code: string) => {
   }
 
   const tokenUrl = `${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/token`;
+
   const body = new URLSearchParams({
     grant_type: "authorization_code",
     client_id: KEYCLOAK_CLIENT_ID,
@@ -81,28 +82,22 @@ export const exchangeKeycloakCodeForTokens = async (code: string) => {
   return (await response.json()) as KeycloakTokenResponse;
 };
 
-export const storeKeycloakTokens = (tokens: KeycloakTokenResponse) => {
-  const claims = decodeJwtClaims(tokens.id_token || tokens.access_token);
+export const getIdentityFromToken = (token: KeycloakTokenResponse) => {
+  const claims = decodeJwtClaims(token.id_token || token.access_token);
   const roles = claims.realm_access?.roles || [];
 
-  localStorage.setItem("accessToken", tokens.access_token);
-
-  if (tokens.refresh_token) {
-    localStorage.setItem("refreshToken", tokens.refresh_token);
-  }
-
-  localStorage.setItem(
-    "user",
-    JSON.stringify({
-      _id: claims.sub || "",
-      name:
-        claims.name || claims.preferred_username || claims.email || "PTR User",
-      email: claims.email || "",
-      role: roles.includes("admin") ? "admin" : "viewer",
-      keycloakUserId: claims.sub,
-    }),
-  );
-
+  // cleanup
   sessionStorage.removeItem("keycloak_oauth_state");
   sessionStorage.removeItem("keycloak_pkce_verifier");
+
+  return {
+    access_token: token.access_token,
+    refresh_token: token.refresh_token,
+    _id: claims.sub || "",
+    name:
+      claims.name || claims.preferred_username || claims.email || "PTR User",
+    email: claims.email || "",
+    role: roles.includes("admin") ? "admin" : "viewer",
+    keycloakUserId: claims.sub,
+  };
 };
