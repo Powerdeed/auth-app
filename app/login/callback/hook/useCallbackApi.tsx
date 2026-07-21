@@ -2,7 +2,7 @@
 
 import { useContext, useEffect, useRef } from "react";
 import { userContext } from "../context/userContext";
-import { execute } from "@lib";
+import { ApiError } from "@lib/api/utils/apiError";
 import { createIdentitySession } from "../services/user.service";
 import { getSearchParams } from "../utils/searchParams";
 
@@ -57,14 +57,17 @@ export default function useCallbackApi() {
         }
 
         setStatus("Creating secure identity session...");
-        await execute(
-          () => createIdentitySession(code, codeVerifier),
-          {
-            setLoading: setFetchingUserData,
-            setError: setFetchingUserDataError,
-            onSuccess: (userData) => setUser(userData),
-          },
-        );
+        setFetchingUserData(true);
+        setFetchingUserDataError("");
+        const userData = await createIdentitySession(code, codeVerifier);
+        setUser(userData);
+        setFetchingUserData(false);
+
+        if (!userData) {
+          throw new Error(
+            "Identity-service did not create a session. Check the callback error and identity-service logs.",
+          );
+        }
 
         sessionStorage.removeItem("keycloak_oauth_state");
         sessionStorage.removeItem("keycloak_pkce_verifier");
@@ -76,6 +79,14 @@ export default function useCallbackApi() {
         const returnTo = storedReturnTo.startsWith("/") ? storedReturnTo : "/";
         window.location.assign(`${client}${returnTo}`);
       } catch (err) {
+        setFetchingUserData(false);
+
+        if (err instanceof ApiError) {
+          setFetchingUserDataError(err.message);
+          setExchangeError(err.message);
+          return;
+        }
+
         setExchangeError(
           err instanceof Error
             ? err.message
