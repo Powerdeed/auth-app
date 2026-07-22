@@ -30,13 +30,13 @@ Identity-service owns the Powerdeed HttpOnly session cookie.
 ## Environment
 
 ```txt
-NEXT_PUBLIC_API_BASE_URL=http://localhost:3000
+NEXT_PUBLIC_IDENTITY_API_BASE_URL=http://localhost:8080
 NEXT_PUBLIC_KEYCLOAK_URL=https://keycloak.powerdeed.co.ke
 NEXT_PUBLIC_KEYCLOAK_REALM=powerdeed
 NEXT_PUBLIC_KEYCLOAK_CLIENT_ID=auth-app
 ```
 
-`NEXT_PUBLIC_API_BASE_URL` must point to identity-service, not CMS service.
+`NEXT_PUBLIC_IDENTITY_API_BASE_URL` must point to identity-service.
 Auth-app builds the Keycloak redirect URI from the current browser origin.
 
 ## Client Registry
