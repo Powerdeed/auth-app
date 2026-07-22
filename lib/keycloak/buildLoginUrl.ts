@@ -5,8 +5,9 @@ import {
   KEYCLOAK_REALM,
   KEYCLOAK_URL,
 } from "@env";
-import { getAppUrl, isAppKey } from "./constants/AppURLs";
+import { isAppKey } from "./constants/AppURLs";
 import { getKeycloakRedirectUri } from "./getRedirectUri";
+import { createLoginState, normalizeReturnTo } from "./redirectState";
 
 const base64UrlEncode = (value: ArrayBuffer | Uint8Array) =>
   btoa(String.fromCharCode(...new Uint8Array(value)))
@@ -27,7 +28,7 @@ const createCodeChallenge = async (verifier: string) => {
 };
 
 export const buildKeycloakLoginUrl = async () => {
-  const state = createRandomString();
+  const nonce = createRandomString();
   const codeVerifier = createRandomString();
   const codeChallenge = await createCodeChallenge(codeVerifier);
   const redirectUri = getKeycloakRedirectUri();
@@ -36,12 +37,17 @@ export const buildKeycloakLoginUrl = async () => {
   const returnTo = searchParams.get("returnTo");
   const client = searchParams.get("client");
   const clientKey = isAppKey(client) ? client : "auth";
+  const state = createLoginState({
+    nonce,
+    client: clientKey,
+    returnTo: normalizeReturnTo(returnTo),
+  });
 
-  sessionStorage.setItem("clientKey", clientKey);
-  sessionStorage.setItem("client", getAppUrl(clientKey));
-  sessionStorage.setItem("returnTo", returnTo || "/");
   sessionStorage.setItem("keycloak_oauth_state", state);
   sessionStorage.setItem("keycloak_pkce_verifier", codeVerifier);
+  sessionStorage.removeItem("client");
+  sessionStorage.removeItem("clientKey");
+  sessionStorage.removeItem("returnTo");
 
   const loginUrl = new URL(
     `${KEYCLOAK_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/auth`,

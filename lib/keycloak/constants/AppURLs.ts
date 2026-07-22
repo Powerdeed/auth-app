@@ -27,11 +27,17 @@ const isLocalBrowser = () => {
   return ["localhost", "127.0.0.1"].includes(window.location.hostname);
 };
 
-const isLocalUrl = (value: string) => {
+const getSafeConfiguredUrl = (value: string | undefined) => {
+  if (!value) return "";
+
   try {
-    return ["localhost", "127.0.0.1"].includes(new URL(value).hostname);
+    const url = new URL(value);
+
+    if (!["http:", "https:"].includes(url.protocol)) return "";
+
+    return url.toString().replace(/\/$/, "");
   } catch {
-    return false;
+    return "";
   }
 };
 
@@ -39,12 +45,14 @@ export const getAppUrl = (client: string | null) => {
   const clientKey = isAppKey(client) ? client : "auth";
   const appUrl = APP_URLS[clientKey];
   const localBrowser = isLocalBrowser();
+  const configuredUrl = getSafeConfiguredUrl(appUrl.configured);
 
   if (
-    appUrl.configured &&
-    (localBrowser || !isLocalUrl(appUrl.configured))
+    configuredUrl &&
+    (localBrowser ||
+      !["localhost", "127.0.0.1"].includes(new URL(configuredUrl).hostname))
   ) {
-    return appUrl.configured;
+    return configuredUrl;
   }
 
   return localBrowser ? appUrl.local : appUrl.production;
