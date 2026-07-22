@@ -1,9 +1,7 @@
 import { User } from "@globals";
 import { apiRequest } from "@lib";
-import { KEYCLOAK_CLIENT_ID, KEYCLOAK_REDIRECT_URI } from "@env";
-
-const getRedirectUri = () =>
-  KEYCLOAK_REDIRECT_URI || `${window.location.origin}/login/callback`;
+import { KEYCLOAK_CLIENT_ID } from "@env";
+import { getKeycloakRedirectUri } from "@lib/keycloak/getRedirectUri";
 
 export const createIdentitySession = async (
   code: string,
@@ -18,7 +16,7 @@ export const createIdentitySession = async (
     data: {
       code,
       codeVerifier,
-      redirectUri: getRedirectUri(),
+      redirectUri: getKeycloakRedirectUri(),
       clientId: KEYCLOAK_CLIENT_ID,
     },
   });

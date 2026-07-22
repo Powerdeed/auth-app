@@ -3,10 +3,10 @@
 import {
   KEYCLOAK_CLIENT_ID,
   KEYCLOAK_REALM,
-  KEYCLOAK_REDIRECT_URI,
   KEYCLOAK_URL,
 } from "@env";
 import { APP_URLS } from "./constants/AppURLs";
+import { getKeycloakRedirectUri } from "./getRedirectUri";
 
 const base64UrlEncode = (value: ArrayBuffer | Uint8Array) =>
   btoa(String.fromCharCode(...new Uint8Array(value)))
@@ -30,8 +30,7 @@ export const buildKeycloakLoginUrl = async () => {
   const state = createRandomString();
   const codeVerifier = createRandomString();
   const codeChallenge = await createCodeChallenge(codeVerifier);
-  const redirectUri =
-    KEYCLOAK_REDIRECT_URI || `${window.location.origin}/login/callback`;
+  const redirectUri = getKeycloakRedirectUri();
   const searchParams = new URLSearchParams(window.location.search);
 
   const returnTo = searchParams.get("returnTo");

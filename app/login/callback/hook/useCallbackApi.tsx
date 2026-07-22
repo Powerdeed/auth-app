@@ -74,7 +74,7 @@ export default function useCallbackApi() {
 
         setStatus("Identity login completed successfully, redirecting back...");
         const client =
-          sessionStorage.getItem("client") || "http://localhost:3001";
+          sessionStorage.getItem("client") || window.location.origin;
         const storedReturnTo = sessionStorage.getItem("returnTo") || "/";
         const returnTo = storedReturnTo.startsWith("/") ? storedReturnTo : "/";
         window.location.assign(`${client}${returnTo}`);

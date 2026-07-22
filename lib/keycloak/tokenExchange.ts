@@ -3,13 +3,10 @@
 import {
   KEYCLOAK_CLIENT_ID,
   KEYCLOAK_REALM,
-  KEYCLOAK_REDIRECT_URI,
   KEYCLOAK_URL,
 } from "@env";
+import { getKeycloakRedirectUri } from "./getRedirectUri";
 import { KeycloakTokenClaims, KeycloakTokenResponse } from "./types";
-
-const getRedirectUri = () =>
-  KEYCLOAK_REDIRECT_URI || `${window.location.origin}/login/callback`;
 
 const decodeBase64Url = (value: string) => {
   const base64 = value.replace(/-/g, "+").replace(/_/g, "/");
@@ -40,7 +37,7 @@ export const exchangeKeycloakCodeForToken = async (code: string) => {
   const body = new URLSearchParams({
     grant_type: "authorization_code",
     client_id: KEYCLOAK_CLIENT_ID,
-    redirect_uri: getRedirectUri(),
+    redirect_uri: getKeycloakRedirectUri(),
     code,
     code_verifier: codeVerifier,
   });
