@@ -25,13 +25,6 @@ export const api = axios.create({
 api.interceptors.response.use(
   (response) => response,
   (err) => {
-    if (typeof window !== "undefined" && err.response?.status === 401) {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
-      localStorage.removeItem("user");
-      window.location.href = "/login";
-    }
-
     return Promise.reject(err);
   },
 );
