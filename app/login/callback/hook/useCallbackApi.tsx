@@ -6,7 +6,6 @@ import { ApiError } from "@lib/api/utils/apiError";
 import { createIdentitySession } from "../services/user.service";
 import { getSearchParams } from "../utils/searchParams";
 import { getAppUrl } from "@lib/keycloak/constants/AppURLs";
-import { readLoginState } from "@lib/keycloak/redirectState";
 
 export default function useCallbackApi() {
   const hasExchangedCode = useRef(false);
@@ -50,12 +49,6 @@ export default function useCallbackApi() {
           throw new Error("Invalid login state. Start the login flow again.");
         }
 
-        const loginState = readLoginState(returnedState);
-
-        if (!loginState) {
-          throw new Error("Invalid login destination. Start the login flow again.");
-        }
-
         hasExchangedCode.current = true;
 
         const codeVerifier = sessionStorage.getItem("keycloak_pkce_verifier");
@@ -81,10 +74,14 @@ export default function useCallbackApi() {
         sessionStorage.removeItem("keycloak_pkce_verifier");
 
         setStatus("Identity login completed successfully, redirecting back...");
-        const client = getAppUrl(loginState.client);
-        const redirectUrl = new URL(loginState.returnTo, client);
-
-        window.location.replace(redirectUrl.toString());
+        const clientKey = sessionStorage.getItem("clientKey");
+        const client = getAppUrl(clientKey);
+        const storedReturnTo = sessionStorage.getItem("returnTo") || "/";
+        const returnTo = storedReturnTo.startsWith("/") ? storedReturnTo : "/";
+        sessionStorage.removeItem("client");
+        sessionStorage.removeItem("clientKey");
+        sessionStorage.removeItem("returnTo");
+        window.location.assign(`${client}${returnTo}`);
       } catch (err) {
         setFetchingUserData(false);
 
