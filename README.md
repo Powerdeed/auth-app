@@ -31,9 +31,6 @@ Identity-service owns the Powerdeed HttpOnly session cookie.
 
 ```txt
 NEXT_PUBLIC_API_BASE_URL=http://localhost:3000
-NEXT_PUBLIC_AUTH_APP_URL=http://localhost:3001
-NEXT_PUBLIC_CMS_APP_URL=http://localhost:3002
-NEXT_PUBLIC_COMMAND_CENTER_APP_URL=http://localhost:3003
 NEXT_PUBLIC_KEYCLOAK_URL=https://keycloak.powerdeed.co.ke
 NEXT_PUBLIC_KEYCLOAK_REALM=powerdeed
 NEXT_PUBLIC_KEYCLOAK_CLIENT_ID=auth-app

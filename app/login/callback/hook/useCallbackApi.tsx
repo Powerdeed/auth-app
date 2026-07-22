@@ -5,6 +5,7 @@ import { userContext } from "../context/userContext";
 import { ApiError } from "@lib/api/utils/apiError";
 import { createIdentitySession } from "../services/user.service";
 import { getSearchParams } from "../utils/searchParams";
+import { getAppUrl, getSafeReturnTo } from "@lib/keycloak/constants/AppURLs";
 
 export default function useCallbackApi() {
   const hasExchangedCode = useRef(false);
@@ -73,11 +74,14 @@ export default function useCallbackApi() {
         sessionStorage.removeItem("keycloak_pkce_verifier");
 
         setStatus("Identity login completed successfully, redirecting back...");
-        const client =
-          sessionStorage.getItem("client") || window.location.origin;
-        const storedReturnTo = sessionStorage.getItem("returnTo") || "/";
-        const returnTo = storedReturnTo.startsWith("/") ? storedReturnTo : "/";
-        window.location.assign(`${client}${returnTo}`);
+        const client = getAppUrl(sessionStorage.getItem("clientKey"));
+        const returnTo = getSafeReturnTo(sessionStorage.getItem("returnTo"));
+
+        sessionStorage.removeItem("client");
+        sessionStorage.removeItem("clientKey");
+        sessionStorage.removeItem("returnTo");
+
+        window.location.assign(new URL(returnTo, client).toString());
       } catch (err) {
         setFetchingUserData(false);
 
