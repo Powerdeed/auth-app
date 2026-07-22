@@ -1,12 +1,8 @@
 "use client";
 
-import {
-  KEYCLOAK_CLIENT_ID,
-  KEYCLOAK_REALM,
-  KEYCLOAK_URL,
-} from "@env";
-import { getAppUrl, isAppKey } from "./constants/AppURLs";
+import { KEYCLOAK_CLIENT_ID, KEYCLOAK_REALM, KEYCLOAK_URL } from "@env";
 import { getKeycloakRedirectUri } from "./getRedirectUri";
+import { APP_URLS } from "./constants/AppURLs";
 
 const base64UrlEncode = (value: ArrayBuffer | Uint8Array) =>
   btoa(String.fromCharCode(...new Uint8Array(value)))
@@ -35,10 +31,13 @@ export const buildKeycloakLoginUrl = async () => {
 
   const returnTo = searchParams.get("returnTo");
   const client = searchParams.get("client");
-  const clientKey = isAppKey(client) ? client : "auth";
+  const clientKey =
+    client && Object.prototype.hasOwnProperty.call(APP_URLS, client)
+      ? (client as keyof typeof APP_URLS)
+      : "auth";
 
   sessionStorage.setItem("clientKey", clientKey);
-  sessionStorage.setItem("client", getAppUrl(clientKey));
+  sessionStorage.setItem("client", APP_URLS[clientKey]);
   sessionStorage.setItem("returnTo", returnTo || "/");
   sessionStorage.setItem("keycloak_oauth_state", state);
   sessionStorage.setItem("keycloak_pkce_verifier", codeVerifier);
